@@ -1,0 +1,891 @@
+PRACTICAL NO. 2
+
+Implement Web Drivers on various Browsers
+Q) Create a menu-driven application that allows users to open a specified URL in the web browser of their choice.
+Code:
+import java.awt.Desktop;
+import java.net.URI;
+import java.util.Scanner;
+public class Assignment2 {
+public static void main(String[] args) {
+		// TODO Auto-generated method stub
+Scanner scanner = new Scanner(System.in);
+       	 String url;
+System.out.print("Enter the URL : ");
+        url = scanner.nextLine();
+while (true) {
+            System.out.println("\nChoose a browser to open the URL:");
+            System.out.println("1. Default System Browser");
+            System.out.println("2. Open with Chrome (if installed)");
+            System.out.println("3. Open with Firefox (if installed)");
+            System.out.println("4. Exit");
+Int choice = scanner.nextInt();
+            scanner.nextLine(); 
+ try {
+                switch (choice) {
+                    case 1:
+                        openDefaultBrowser(url);
+                        break;
+                    case 2:
+                        openWithBrowser("chrome", url);
+                        break;
+                    case 3:
+                        openWithBrowser("firefox", url);
+                        break;
+                    case 4:
+                        System.out.println("Exiting application...");
+                        return;
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
+                }
+            } catch (Exception e) {
+                System.out.println("Error opening browser: " + e.getMessage());
+            }
+        }
+    }	public static void openDefaultBrowser(String url) throws Exception {
+        if (Desktop.isDesktopSupported()) {
+            Desktop.getDesktop().browse(new URI(url));
+            System.out.println("Opened in default browser.");
+        } else {
+            throw new UnsupportedOperationException("Desktop is not supported.");
+        }
+    }public static void openWithBrowser(String browser, String url) throws Exception {
+        String command = "";
+        if (browser.equalsIgnoreCase("chrome")) {
+            command = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+        } else if (browser.equalsIgnoreCase("firefox")) {
+            command = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+        }
+Runtime.getRuntime().exec(new String[] {command, url});
+        System.out.println("Opened with " + browser);
+
+	}
+}
+PRACTICAL NO. 3
+
+Q) Implement and demonstrate LOCATOR commands
+Code:
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class Assignment3 {
+    public static void main(String[] args) throws InterruptedException {
+        System.setProperty("webdriver.chrome.driver", "D:\\mca24064\\chromedriver-win64\\chromedriver.exe");
+        WebDriver driver = new ChromeDriver();
+// 1. Valid login using ID locator (saucedemo.com)
+        driver.get("https://www.saucedemo.com/");
+        Thread.sleep(1000);
+        driver.findElement(By.id("user-name")).sendKeys("standard_user");
+        driver.findElement(By.id("password")).sendKeys("secret_sauce");
+        driver.findElement(By.id("login-button")).click();
+        Thread.sleep(3000);
+
+        // 2. Invalid login using name, className, tagName
+        driver.get("https://www.facebook.com/login/");
+        Thread.sleep(1000);
+        driver.findElement(By.name("email")).sendKeys("wrongUser");
+        driver.findElement(By.name("pass")).sendKeys("wrongPass");
+        driver.findElement(By.tagName("button")).click();
+        Thread.sleep(3000);
+
+        // 3. Retrieve and print username/password (Demo on saucedemo again)
+        driver.get("https://www.saucedemo.com/");
+        WebElement userField = driver.findElement(By.id("user-name"));
+        WebElement passField = driver.findElement(By.id("password"));
+        userField.sendKeys("SahilSawant");
+        passField.sendKeys("Password123");
+        String userVal = userField.getAttribute("value");
+        String passVal = passField.getAttribute("value");
+        System.out.println("Entered Username: " + userVal);
+        System.out.println("Entered Password: " + passVal);
+        Thread.sleep(2000);
+
+        // 4. Fill Facebook signup form
+        driver.get("https://www.facebook.com/r.php");
+        Thread.sleep(2000);
+        driver.findElement(By.name("firstname")).sendKeys("Sahil");
+        driver.findElement(By.name("lastname")).sendKeys("Sawant");
+        driver.findElement(By.name("reg_email__")).sendKeys("sahil@example.com");
+        driver.findElement(By.name("reg_passwd__")).sendKeys("Password@123");
+        driver.findElement(By.id("day")).sendKeys("6");
+        driver.findElement(By.id("month")).sendKeys("Aug");
+        driver.findElement(By.id("year")).sendKeys("2000");
+        driver.findElement(By.xpath("//label[text()='Male']")).click();
+        Thread.sleep(3000);
+        // 5. Verify Google logo using CSS Selector
+        driver.get("https://www.google.com");
+        Thread.sleep(2000);
+        boolean logoPresent = driver.findElement(By.cssSelector("img.lnXdpd")).isDisplayed();
+        System.out.println("Google logo displayed: " + logoPresent);
+
+        // 6. Gmail login using XPath (email field only due to security)
+        driver.get("https://accounts.google.com/signin");
+        Thread.sleep(2000);
+        driver.findElement(By.xpath("//input[@type='email']")).sendKeys("sahil@gmail.com");
+        driver.findElement(By.xpath("//span[text()='Next']")).click();
+        Thread.sleep(3000);
+        // Password step is protected and should not be automated for real accounts
+
+        // 7. Facebook "Forgot Password" using link text
+        driver.get("https://www.facebook.com/");
+        Thread.sleep(2000);
+        driver.findElement(By.linkText("Forgotten password?")).click();
+        Thread.sleep(2000);
+        driver.findElement(By.name("email")).sendKeys("sahil@gmail.com.com");
+        Thread.sleep(3000);
+
+        // Close browser
+        driver.quit();
+    }
+}
+================================================================== PRACTICAL NO. 4
+Q) Implement Browser command and navigation Commands.
+a)	Invoke any Browser
+b)	Open any URL of your own choice:
+c)	Get Page Title name and Title length
+d)	Print Page Title and Title length on the Eclipse Console 
+e)	Get page Source and Page Source length
+f)	Print page Length on Eclipse Console.
+g)	Close the Browser
+
+Code:
+import java.util.Scanner;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class A4 {
+    public static void main(String[] args) throws InterruptedException {
+        Scanner s = new Scanner(System.in);
+        ChromeDriver driver = new ChromeDriver();
+        System.out.print("Functionalities: \n"
+                + "1. Basic Browser Commands\n"
+                + "2. Navigation Commands\n"
+                + "Enter your choice: ");
+        int ch = s.nextInt();
+
+        // Case 1: Browser Commands
+        if (ch == 1) {
+            driver.get("https://www.saucedemo.com/v1/");
+            String title = driver.getTitle();
+            int titleLength = title.length();
+            System.out.println("\nTitle of the Current Page: " + title);
+            System.out.println("Length of the Title: " + titleLength);
+            String src = driver.getPageSource();
+            int srcLength = src.length();
+            System.out.println("\nRetrieved Page Source: " + src);
+            System.out.println("Length of Page Source: " + srcLength);
+            driver.close();
+        }
+        else if (ch == 2) {
+            System.out.println("\nLanding on first page...");
+            driver.navigate().to("https://www.saucedemo.com/v1/");
+            Thread.sleep(5000);
+            System.out.println("Landing on second page...");
+            driver.navigate().to("https://practicetestautomation.com/practice-test-login/");
+            Thread.sleep(5000);
+            System.out.println("Going backward...");
+            driver.navigate().back();
+            Thread.sleep(5000);
+
+            System.out.println("Going forward...");
+            driver.navigate().forward();
+            Thread.sleep(5000);
+            System.out.println("Refreshing...");
+            driver.navigate().refresh();
+            Thread.sleep(5000);
+            System.out.println("Closing browser...");
+            driver.close();
+        }
+        else {
+            System.out.println("Invalid choice! Please run again.");
+            driver.close();
+        }
+        s.close();
+    }
+}
+PRACTICAL NO. 5
+Q) Develop a menu-driven application that demonstrates the implementation of different wait methods in Selenium.
+Code:
+import java.time.Duration;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import com.google.common.base.Function;
+import org.openqa.selenium.support.ui.Wait;
+public class SeleniumMethods {
+    private static final String URL = "https://www.saucedemo.com/v1/";
+    private static final String USERNAME = "standard_user";
+    private static final String PASSWORD = "secret_sauce";
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        while (true) {
+            System.out.println("\n=== Selenium Waits Demo ===");
+            System.out.println("1. Implicit Wait");
+            System.out.println("2. Explicit Wait");
+            System.out.println("3. Fluent Wait");
+            System.out.println("4. Hard Wait (Thread.sleep)");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = sc.nextInt();
+            switch (choice) {
+                case 1 -> implicitWaitDemo();
+                case 2 -> explicitWaitDemo();
+                case 3 -> fluentWaitDemo();
+                case 4 -> hardWaitDemo();
+                case 5 -> {
+                    System.out.println("Exiting...");
+                    sc.close();
+                    System.exit(0);
+                }
+                default -> System.out.println("Invalid choice! Try again.");
+            }
+        }
+    }
+ private static WebDriver setupDriver() {
+        System.setProperty("webdriver.chrome.driver", "D:\\Sahil\\chromedriver-win64\\chromedriver.exe"); 
+        WebDriver driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        return driver;
+    }
+      private static void login(WebDriver driver) {
+        driver.get(URL);
+        driver.findElement(By.id("user-name")).sendKeys(USERNAME);
+        driver.findElement(By.id("password")).sendKeys(PASSWORD);
+        driver.findElement(By.id("login-button")).click();
+    }
+    private static void implicitWaitDemo() {
+        WebDriver driver = setupDriver();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        login(driver);
+        WebElement product = driver.findElement(By.className("inventory_item_name"));
+        System.out.println("Implicit Wait found product: " + product.getText());
+        driver.quit();
+    }
+    private static void explicitWaitDemo() {
+        WebDriver driver = setupDriver();
+        login(driver);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement cart = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("shopping_cart_link")));
+        System.out.println("Explicit Wait found cart icon displayed: " + cart.isDisplayed());
+        driver.quit();
+    }
+    private static void fluentWaitDemo() {
+        WebDriver driver = setupDriver();
+        login(driver);
+        Wait<WebDriver> wait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(15))
+                .pollingEvery(Duration.ofSeconds(2))
+                .ignoring(NoSuchElementException.class);
+        WebElement menuBtn = wait.until(new Function<WebDriver, WebElement>() {
+            public WebElement apply(WebDriver driver) {
+                return driver.findElement(By.id("react-burger-menu-btn"));
+            }
+        });
+        System.out.println("Fluent Wait found menu button: " + menuBtn.getText());
+        driver.quit();
+    }
+    private static void hardWaitDemo() {
+        WebDriver driver = setupDriver();
+        login(driver);
+        try {
+            Thread.sleep(5000); // Hard wait for 5 seconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        WebElement product = driver.findElement(By.className("inventory_item_name"));
+        System.out.println("Hard Wait found product: " + product.getText());
+        driver.quit();
+    }
+
+
+PRACTICAL NO. 7
+Q) Create an application that performs different operations on Dropdown list in Selenium
+Code:
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.Select;
+
+import java.util.List;
+import java.util.Scanner;
+public class SeleniumDropDown {
+
+	 public static void main(String[] args) throws InterruptedException {
+	        System.setProperty("webdriver.chrome.driver", "D:\\Sahil\\chromedriver-win64\\chromedriver.exe");
+
+	        WebDriver driver = new ChromeDriver();
+	        driver.manage().window().maximize();
+	        driver.get("https://the-internet.herokuapp.com/dropdown");
+	        WebElement dropdownElement = driver.findElement(By.id("dropdown"));
+	        Select dropdown = new Select(dropdownElement);
+
+	        Scanner sc = new Scanner(System.in);
+	        int choice;
+	        do {
+	            System.out.println("\n--- Selenium Dropdown Demo Menu ---");
+	            System.out.println("1. Select by Index");
+	            System.out.println("2. Select by Value");
+	            System.out.println("3. Select by Visible Text");
+	            System.out.println("4. Print all Options");
+	            System.out.println("5. Exit");
+	            System.out.print("Enter your choice: ");
+	            choice = sc.nextInt();
+	            switch (choice) {
+	                case 1:
+	                    dropdown.selectByIndex(1); // Select Option 1
+	                    System.out.println("Selected option by Index: " + dropdown.getFirstSelectedOption().getText());
+	                    break;
+	                case 2:
+	                    dropdown.selectByValue("2"); // Select Option 2
+	                    System.out.println("Selected option by Value: " + dropdown.getFirstSelectedOption().getText());
+	                    break;
+	                case 3:
+	                    dropdown.selectByVisibleText("Option 1");
+	                    System.out.println("Selected option by Visible Text: " + dropdown.getFirstSelectedOption().getText());
+	                    break;
+
+	                case 4:
+	                    List<WebElement> options = dropdown.getOptions();
+	                    System.out.println("Available Options in Dropdown:");
+	                    for (WebElement opt : options) {
+	                        System.out.println(opt.getText());
+	                    }
+	                    break;
+
+	                case 5:
+	                    System.out.println("Exiting...");
+	                    break;
+
+	                default:
+	                    System.out.println("Invalid choice! Try again.");
+	            }
+
+	            Thread.sleep(2000);
+
+	        } while (choice != 5);
+
+	        driver.quit();
+	        sc.close();
+	    }
+	}
+PRACTICAL NO. 8
+Q) Develop a menu-driven application that demonstrates the implementation handling frames in Selenium
+Code:
+package assignment8;
+import java.util.Scanner;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class SeleniumFrame {
+
+    public static void main(String[] args) throws InterruptedException {
+        // Set ChromeDriver path
+        System.setProperty("webdriver.chrome.driver", "D:\\Rishi\\chromedriver-win64\\chromedriver.exe");
+
+        WebDriver driver = new ChromeDriver();
+        driver.manage().window().maximize();
+
+        // Open DemoQA Frames page
+        driver.get("https://demoqa.com/frames");
+
+        // Wait for page to load frames
+        driver.manage().timeouts().implicitlyWait(java.time.Duration.ofSeconds(5));
+
+        Scanner sc = new Scanner(System.in);
+        int choice;
+        do {
+            System.out.println("\n--- Selenium Frame Handling Menu (DemoQA) ---");
+            System.out.println("1. Switch to Frame1");
+            System.out.println("2. Switch to Frame2");
+            System.out.println("3. Exit");
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    driver.switchTo().frame("frame1");
+                    WebElement frame1Heading = driver.findElement(By.id("sampleHeading"));
+                    System.out.println("Frame1 Text: " + frame1Heading.getText());
+                    driver.switchTo().defaultContent();
+                    break;
+
+                case 2:
+                    driver.switchTo().frame("frame2");
+                    WebElement frame2Heading = driver.findElement(By.id("sampleHeading"));
+                    System.out.println("Frame2 Text: " + frame2Heading.getText());
+                    driver.switchTo().defaultContent();
+                    break;
+
+                case 3:
+                    System.out.println("Exiting program...");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice! Try again.");
+            }
+
+            Thread.sleep(2000);
+
+        } while (choice != 3);
+
+        driver.quit();
+        sc.close();
+    }
+}
+PRACTICAL NO. 9
+
+Q) Demonstrate different operations using Radio Buttons and Checkboxes in Selenium Webdriver.
+Code: 
+package demo;
+import java.util.Collections;
+import java.util.List;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class Doperation {
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		WebDriver driver = null;
+		driver = new ChromeDriver();
+		driver.get("https://www.hyrtutorials.com/p/frames-practice.html");
+		driver.manage().window().maximize();
+		driver.switchTo().frame("frm2");
+		driver.findElement(By.id("firstName")).sendKeys("Hitesh");
+		driver.findElement(By.id("lastName")).sendKeys("Wadile");
+		WebElement 
+		wlmale=driver.findElement(By.id("malerb"));
+		wlmale.click();
+		System.out.println("Radio button male clicked");
+		WebElement 
+		wlfmale=driver.findElement(By.id("femalerb"));
+		wlmale.click();
+		System.out.println("Radio button female clicked");
+		  List <WebElement> raditems= 
+		  driver.findElements(By.name("gender"));
+		  System.out.println("Elements are");
+		       for(int i=0;i< raditems.size(); i++ )
+			{
+			       System.out.println(raditems.get(i).getAttribute("id")
+			       );
+			 }
+		List<WebElement> checkboxes = 
+		driver.findElements(By.xpath("//input[@type='checkbox']"));
+		Collections.shuffle(checkboxes);
+		       for (int i = 0; i < 3; i++) {
+			 checkboxes.get(i).click();
+			 System.out.println("Checkbox with ID: " + 
+			 checkboxes.get(i).getAttribute("id") + " clicked.");
+				 }
+	}
+}
+PRACTICAL NO. 10
+Automation of Registration Form
+
+Aim: Demonstrate the Automation of Registration from Using Selenium WebDriver.
+Code:
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.Select;
+
+public class Regiform {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		WebDriver driver;
+		driver = new ChromeDriver();
+		
+		driver.get("https://www.hyrtutorials.com/p/css-selectors-practice.html");
+		driver.manage().window().maximize();
+		
+		driver.findElement(By.id("firstName")).sendKeys("Anna");
+		driver.findElement(By.id("lastName")).sendKeys("Forst");
+		
+		driver.findElement(By.className("gender")).sendKeys("Others");
+		driver.findElement(By.className("city")).sendKeys("Mumbai");
+		
+		driver.findElement(By.cssSelector("#post-body-6773323888822088655 > div > form > div.container > input[type=text]:nth-child(5)")).sendKeys("India");
+		driver.findElement(By.cssSelector("#post-body-6773323888822088655 > div > form > div.container > input[type=text]:nth-child(6)")).sendKeys("How is your security?");
+		
+		driver.findElement(By.xpath("//*[@id=\"post-body-6773323888822088655\"]/div/form/div[1]/input[7]")).sendKeys("Very Strong");
+		driver.findElement(By.xpath("//*[@id=\"post-body-6773323888822088655\"]/div/form/div[1]/input[8]")).sendKeys("Verified");
+		
+		
+		WebElement Wele = driver.findElement(By.cssSelector("#post-body-6773323888822088655 > div > form > div.container > select"));
+		Select sobj = new Select(Wele);
+		sobj.selectByValue("apple");
+		
+		WebElement check = driver.findElement(By.cssSelector("#post-body-6773323888822088655 > div > form > div.container > input.confirm"));
+		check.click();
+		
+		WebElement btn = driver.findElement(By.tagName("button"));
+		btn.click();
+		driver.close();
+	}
+}
+PRACTICAL NO. 11
+Implement and Demonstrate Action Class in Selenium
+Aim: Develop a menu-driven application that demonstrates the implementation of Keyboard driven and mouse driven actions in Selenium.
+Code:
+import java.time.Duration;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+public class Mouse_Keyboard {
+	public static void main(String[] args) throws InterruptedException {
+		// TODO Auto-generated method stub
+		WebDriver driver=null;
+		driver=new ChromeDriver();
+		 driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));	
+		
+		//https://demo.automationtesting.in/Register.html	 -- for practice 
+	    driver.get("https://www.saucedemo.com/v1/");
+		driver.findElement(By.id("user-name")).sendKeys("standard_user");
+		driver.findElement(By.id("password")).sendKeys("secret_sauce");
+		driver.findElement(By.id("login-button")).click();
+		WebElement wl=driver.findElement(By.id("item_3_title_link"));
+		Actions actionobj1 = new Actions(driver); 
+		
+     // Perform Click Action on the Web Element  normal click , right click  double click
+  //       actionobj1.click(wl).build().perform();      // normal click
+  //     Duration time =actionobj1.contextClick(wl).getActionDuration(); //  right click
+//     System.out.println("Time taken to perform the action " + time);
+//       actionobj1.doubleClick(wl).build().perform();    // Double click
+	/*driver.navigate().to("https://demoqa.com/buttons");             //Navigating to another page
+		WebElement wlD=driver.findElement(By.id("doubleClickBtn"));
+		Actions actionobj = new Actions(driver); 
+		actionobj.doubleClick(wlD).build().perform();
+		WebElement wlR=driver.findElement(By.id("rightClickBtn"));
+		actionobj.contextClick(wlR).build().perform(); */ 
+		
+//Perform Mouse Hover Action on the Web Element  
+	   /*  driver.navigate().to("https://demoqa.com/links");
+		Actions actionobjmh = new Actions(driver); 
+		WebElement wlmh=driver.findElement(By.linkText("Home"));
+		 actionobjmh.moveToElement(wlmh).build().perform();
+		 System.out.println("Mouse hover Action performed"); */
+
+  // Perform drag & Drop operation on a webelement
+	/*	driver.get("https://demo.automationtesting.in/Static.html");
+		// Create an instance of the Actions class
+		Actions action = new Actions(driver);
+                          // Locate web source element that is a image 
+	        WebElement source= driver.findElement(By.id("mongo"));
+		        // Locate target web element that is a box
+	        WebElement target= driver.findElement(By.id("droparea"));
+			//perform the drag and drop  action drag image and put in a box 
+	       action.dragAndDrop(source, target).build().perform(); */
+		
+		 // Perfrom click hold and release  operation
+		  /*driver.get("https://demo.automationtesting.in/Static.html");
+		  // Create an instance of the Actions class
+		  Actions action1 = new Actions(driver);
+		  // Locate web source element that is a image
+		  WebElement source1 = driver.findElement(By.id("angular"));
+		  // Locate target web element that is a box
+		  WebElement target1 = driver.findElement(By.id("droparea"));
+		  // click a image hold it and move to box and realse the image in box 
+ action1.clickAndHold(source1).moveToElement(target1).release().build().perform(); */
+		
+		// keyboard key press up and down -> shift ,control, delete, backspace 
+		/*driver.get("https://demoqa.com/automation-practice-form");      	 	                  
+		Actions action = new Actions(driver);
+		  WebElement id = driver.findElement(By.id("firstName"));
+		  action.keyDown(Keys.SHIFT).perform();
+		  id.sendKeys("Inshirah");
+		   System.out.println("name Entered");
+		  Thread.sleep(1000);
+		  action.keyUp(Keys.SHIFT).perform();
+action.keyDown(Keys.CONTROL).sendKeys("a").keyUp(Keys.CONTROL).sendKeys(Keys.BACK_SPACE).perform(); */   
+		  
+		  // Upload any file to the server
+		  String baseUrl = "https://demo.guru99.com/test/upload/";
+	        driver.get(baseUrl);
+	        WebElement uploadElement = driver.findElement(By.id("uploadfile_0"));
+	        // enter the file path onto the file-selection input field
+	        uploadElement.sendKeys("E:\\Users\\mca23_001\\Documents\\sample.jpg");
+	        // check the "I accept the terms of service" check box
+	        driver.findElement(By.id("terms")).click();
+	        // click the "UploadFile" button
+	        driver.findElement(By.name("send")).click();
+	        System.out.println("File Uploaded Sucessfully"); 
+	}}
+PRACTICAL NO. 12
+Implementation of Annotations in testNG
+
+Aim: Demonstrate the implementation of various annotations available in TestNG on a website.
+
+Code:
+package testng;
+
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import java.util.concurrent.TimeUnit;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.Select;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.AfterSuite;
+
+public class AnnoApp {
+	WebDriver wd;
+  @Test(priority =0)
+  public void f() {
+	  wd.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+	  wd.findElement(By.id("react-burger-menu-btn")).click();
+	  wd.findElement(By.xpath("//*[@id=\"react-burger-cross-btn\"]")).click();
+  }
+  @Test(priority =1)
+  public void f1() {
+	  wd.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+	  Select s = new Select(wd.findElement(By.className("product_sort_container")));
+	  s.selectByIndex(1);
+  }
+  @Test(priority =2)
+  public void f2() {
+	  wd.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+	  Select s = new Select(wd.findElement(By.className("product_sort_container")));
+	  s.selectByIndex(2);
+  }
+  @Test(priority =3)
+  public void f3() {
+	  wd.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+	  Select s = new Select(wd.findElement(By.className("product_sort_container")));
+	  s.selectByIndex(3);
+  }
+  @Test(priority =4)
+  public void f4() {
+	  wd.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+	  wd.findElement(By.xpath("//*[@id=\"item_5_title_link\"]/div")).click();
+	  wd.findElement(By.id("back-to-products")).click();
+  }
+  @Test(priority =5)
+  public void f5() {
+	  wd.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+	  wd.findElement(By.xpath("//*[@id=\"item_4_title_link\"]/div")).click();
+	  wd.findElement(By.id("back-to-products")).click();
+  }
+  @Test(priority =6)
+  public void f6() {
+	  wd.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+	  wd.findElement(By.xpath("//*[@id=\"item_0_title_link\"]/div")).click();
+	  wd.findElement(By.id("back-to-products")).click();
+  }
+  @Test(priority =7)
+  public void f7() {
+	  wd.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+	  wd.findElement(By.xpath("//*[@id=\"item_1_title_link\"]/div")).click();
+	  wd.findElement(By.id("back-to-products")).click();
+  }
+  @Test(priority =8)
+  public void f8() {
+	  wd.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+	  wd.findElement(By.xpath("//*[@id=\"item_2_title_link\"]/div")).click();
+	  wd.findElement(By.id("back-to-products")).click();
+  }
+  @Test(priority =9)
+  public void f9() {
+	  wd.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+	  wd.findElement(By.xpath("//*[@id=\"item_3_title_link\"]/div")).click();
+	  wd.findElement(By.id("back-to-products")).click();
+  }
+  @Test(priority =10)
+  public void f10() {
+	  wd.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+	  wd.findElement(By.id("add-to-cart-sauce-labs-backpack")).click();
+	  wd.findElement(By.id("remove-sauce-labs-backpack")).click();
+  }
+  @Test(priority =11)
+  public void f11() {
+	  wd.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+	  wd.findElement(By.id("add-to-cart-sauce-labs-bike-light")).click();
+	  wd.findElement(By.className("shopping_cart_link")).click();
+	  wd.findElement(By.id("remove-sauce-labs-bike-light")).click();
+	  wd.findElement(By.id("continue-shopping")).click();
+  }
+  @Test(priority =12)
+  public void f13() {
+	  wd.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+	  wd.findElement(By.id("add-to-cart-sauce-labs-bike-light")).click();
+	  wd.findElement(By.className("shopping_cart_link")).click();
+	  wd.findElement(By.xpath("//*[@id=\"checkout\"]")).click();
+	  wd.findElement(By.id("cancel")).click();
+  }
+  @Test(priority =13)
+  public void f14() {
+	  wd.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+	  wd.findElement(By.xpath("//*[@id=\"checkout\"]")).click();
+	  wd.findElement(By.id("first-name")).sendKeys("Hrishikesh");
+	  wd.findElement(By.id("last-name")).sendKeys("Shinde");
+	  wd.findElement(By.id("postal-code")).sendKeys("400708");
+	  wd.findElement(By.id("continue")).click();
+  }
+  @Test(priority =14)
+  public void f15() {
+	  wd.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+	  wd.findElement(By.id("finish")).click();
+	  wd.findElement(By.id("back-to-products")).click();
+  }
+  @BeforeMethod
+  public void beforeMethod() {
+  }
+  @AfterMethod
+  public void afterMethod() {
+  }
+  @BeforeClass
+  public void beforeClass() {
+	  wd.get("http://saucedemo.com");
+	  wd.findElement(By.xpath("/html/body/div/div/div[2]/div[1]/div/div/form/div[1]/input")).sendKeys("standard_user");
+	  wd.findElement(By.xpath("//*[@id=\"password\"]")).sendKeys("secret_sauce");
+	  wd.findElement(By.xpath("//*[@id=\"login-button\"]")).click();
+  }
+  @AfterClass
+  public void afterClass() {
+	  wd.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+	  wd.findElement(By.id("react-burger-menu-btn")).click();
+	  wd.findElement(By.linkText("Logout")).click();
+  }
+
+  @BeforeTest
+  public void beforeTest() {
+  }
+  @AfterTest
+  public void afterTest() {
+  }
+  @BeforeSuite
+  public void beforeSuite() {
+	  	System.setProperty("webdriver.chrome.driver","E:\\Chrome Driver- Selenium\\117.0.5938.63\\chromedriver.exe" );
+	  	wd = new ChromeDriver();
+  }
+  @AfterSuite
+  public void afterSuite() {
+  }
+}
+PRACTICAL NO. 13
+DataProvider Annotation
+
+Aim: Implementation of DataProvider Annotation on a website for testing for login name and password
+
+Code:
+package ggg;
+
+import java.time.Duration;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+public class gh{
+	
+	@Test(dataProvider="dp")
+	public void f(String un, String ps)
+	
+	{
+		WebDriver driver=null;
+		driver = new ChromeDriver();
+		driver.get("https://www.saucedemo.com/v1/");	
+		driver.manage().window().maximize();
+	driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+		driver.findElement(By.id("user-name")).sendKeys(un);
+		driver.findElement(By.id("password")).sendKeys(ps);
+		driver.findElement(By.id("login-button")).click();
+		
+		try {
+			driver.findElement(By.xpath("//*[@id=\"inventory_container\"]/div/div[1]/div[3]/button")).click();
+			System.out.println("Testing Sucessful");
+		} catch (Exception e)
+		{
+			System.out.println("Testing Sucessful");	
+		} 	
+	}
+		
+	@DataProvider
+	/* public Object[][] dp()
+	{
+		 Object[][] data = new Object[2][2];
+				{
+			data [0][0] ="standard_user";
+		    data [0][1]="secret_sauce";
+		    
+		    data [1][0] ="user";
+		    data [1][1]="secret_sauce";
+				}
+				return data;
+	}  */
+	
+	public Object[][] dp()
+	{
+		return new Object[][]
+				{
+		new Object[]{"standard_user","secret_sauce"},
+			{ "abc","abc"},
+			{ "abcd","abcd"}
+		
+				};
+}
+}
+PRACTICAL NO. 14
+Validation Check in TestNG
+
+Aim: Implementation of Validation check in Testing
+Code:
+package demowork;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
+import org.testng.Assert;
+ 
+ 
+public class annotationdemo{
+	@Test
+	public void validcheck()
+	{
+		WebDriver driver=null;
+		driver=new ChromeDriver();
+		driver.get("https://demo.automationtesting.in/Register.html");
+		WebElement wlps1=driver.findElement(By.id("firstpassword"));
+		wlps1.sendKeys("Sandeep");
+		WebElement wlps2=driver.findElement(By.id("secondpassword"));
+		wlps2.sendKeys("Yadav");
+		String ps1=wlps1.getText();
+		String ps2=wlps2.getText();
+		boolean result=ps1.equalsIgnoreCase(ps2);
+		System.out.println(result);
+		Assert.assertTrue(result);
+		if (result)	
+		{
+			System.out.println(" Password is correct");
+		}
+	}
+}
+
